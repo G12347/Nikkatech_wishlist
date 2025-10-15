@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Formatting - Nikka AI Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: float 25s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #ff1493 0%, transparent 70%);
+            top: 10%;
+            right: 20%;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ff69b4 0%, transparent 70%);
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-60px, 60px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 0;
+            position: relative;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff1493, #ff69b4, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .follow-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 20, 147, 0.3);
+            color: #ff69b4;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .follow-btn:hover {
+            background: rgba(255, 20, 147, 0.15);
+            border-color: #ff1493;
+            transform: translateY(-2px);
+        }
+
+        .follow-btn svg {
+            transition: transform 0.3s ease;
+        }
+
+        .follow-btn:hover svg {
+            transform: scale(1.1);
+        }
+
+        .back-btn {
+            background: rgba(255, 20, 147, 0.1);
+            border: 2px solid rgba(255, 20, 147, 0.3);
+            color: #ff69b4;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 20, 147, 0.2);
+            border-color: #ff1493;
+            transform: translateY(-2px);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: rgba(255, 20, 147, 0.1);
+            border: 2px solid rgba(255, 20, 147, 0.3);
+            padding: 0.6rem 0.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle span {
+            width: 24px;
+            height: 2px;
+            background: #ff69b4;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 20, 147, 0.2);
+            border-color: #ff1493;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            border-left: 1px solid rgba(255, 20, 147, 0.2);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 20, 147, 0.1);
+            border: 2px solid rgba(255, 20, 147, 0.3);
+            color: #ff69b4;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-menu:hover {
+            background: rgba(255, 20, 147, 0.2);
+            border-color: #ff1493;
+            transform: rotate(90deg);
+        }
+
+        .mobile-menu-content {
+            padding: 5rem 2rem 2rem;
+        }
+
+        .mobile-menu-content h3 {
+            color: #ff69b4;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .mobile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 20, 147, 0.2);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+        }
+
+        .mobile-menu-item.active {
+            background: rgba(255, 20, 147, 0.15);
+            border-color: #ff1493;
+            box-shadow: 0 0 20px rgba(255, 20, 147, 0.3);
+        }
+
+        .mobile-menu-item.active::before {
+            content: '●';
+            position: absolute;
+            left: -10px;
+            color: #ff1493;
+            font-size: 1.5rem;
+        }
+
+        .mobile-menu-item:hover {
+            background: rgba(255, 20, 147, 0.1);
+            border-color: #ff1493;
+            transform: translateX(5px);
+        }
+
+        .menu-icon {
+            font-size: 2rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .mobile-menu-item h4 {
+            color: #ff69b4;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .mobile-menu-item p {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .mobile-menu-cta {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 20, 147, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 20, 147, 0.3);
+            border-radius: 50px;
+            color: #ff69b4;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 20, 147, 0.15);
+            border-color: #ff1493;
+        }
+
+        .hero-section {
+            padding: 6rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero-icon {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #ff69b4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: #b0b0b0;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 20, 147, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+        }
+
+        .feature-box:hover {
+            background: rgba(255, 20, 147, 0.08);
+            border-color: #ff1493;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 20, 147, 0.3);
+        }
+
+        .feature-box h3 {
+            color: #ff69b4;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .feature-box p {
+            color: #b0b0b0;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .use-cases {
+            margin: 6rem 0;
+            padding: 4rem;
+            background: radial-gradient(circle at center, rgba(255, 20, 147, 0.1) 0%, transparent 70%);
+            border-radius: 30px;
+        }
+
+        .use-cases h2 {
+            font-size: 3rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #ff1493;
+        }
+
+        .use-case-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .use-case-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #ff1493;
+            transition: all 0.3s ease;
+        }
+
+        .use-case-item:hover {
+            background: rgba(255, 20, 147, 0.1);
+            transform: translateX(10px);
+        }
+
+        .use-case-item h4 {
+            color: #ff69b4;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .use-case-item p {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 6rem 0;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #ff1493, #ff69b4);
+            color: #ffffff;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 50px rgba(255, 20, 147, 0.4);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(255, 20, 147, 0.6);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: #666;
+            border-top: 1px solid rgba(255, 20, 147, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .follow-btn {
+                display: none;
+            }
+
+            .back-btn {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .mobile-menu {
+                max-width: 100%;
+            }
+
+            .nav-right {
+                gap: 0.5rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-menu {
+                max-width: 450px;
+            }
+
+            .menu-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+    </div>
+
+    <div class="container">
+        <nav>
+            <a href="index.html" class="logo">Nikka AI Hub</a>
+            <div class="nav-right">
+                <a href="https://twitter.com/nikkaihub" target="_blank" class="follow-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    Follow us on X
+                </a>
+                <a href="index.html" class="back-btn">← Back to Home</a>
+                <button class="menu-toggle" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <button class="close-menu" onclick="toggleMenu()">✕</button>
+            <div class="mobile-menu-content">
+                <h3>Features</h3>
+                <a href="writing.html" class="mobile-menu-item">
+                    <span class="menu-icon">✍️</span>
+                    <div>
+                        <h4>AI Writing</h4>
+                        <p>Generate compelling content</p>
+                    </div>
+                </a>
+                <a href="transcription.html" class="mobile-menu-item">
+                    <span class="menu-icon">🎙️</span>
+                    <div>
+                        <h4>Transcription</h4>
+                        <p>Audio to text conversion</p>
+                    </div>
+                </a>
+                <a href="text-to-speech.html" class="mobile-menu-item">
+                    <span class="menu-icon">🔊</span>
+                    <div>
+                        <h4>Text-to-Speech</h4>
+                        <p>Natural voice generation</p>
+                    </div>
+                </a>
+                <a href="speech-to-text.html" class="mobile-menu-item">
+                    <span class="menu-icon">🎧</span>
+                    <div>
+                        <h4>Speech-to-Text</h4>
+                        <p>Real-time voice recognition</p>
+                    </div>
+                </a>
+                <a href="formatting.html" class="mobile-menu-item active">
+                    <span class="menu-icon">📝</span>
+                    <div>
+                        <h4>Smart Formatting</h4>
+                        <p>Automatic document styling</p>
+                    </div>
+                </a>
+                <a href="chatbots.html" class="mobile-menu-item">
+                    <span class="menu-icon">🤖</span>
+                    <div>
+                        <h4>Chatbot Agents</h4>
+                        <p>Intelligent conversation AI</p>
+                    </div>
+                </a>
+                <div class="mobile-menu-cta">
+                    <a href="https://twitter.com/nikkaihub" target="_blank" class="social-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        Follow us on X
+                    </a>
+                    <a href="index.html#waitlist" class="cta-button" onclick="toggleMenu();">Join Waitlist</a>
+                </div>
+            </div>
+        </div>
+
+        <section class="hero-section">
+            <div class="hero-icon">📝</div>
+            <h1>Smart Formatting</h1>
+            <p class="subtitle">
+                Automatically structure and style your documents with AI-powered formatting. 
+                Transform messy text into beautifully formatted content in seconds.
+            </p>
+        </section>
+
+        <div class="features-grid">
+            <div class="feature-box">
+                <h3>🎨 Auto Styling</h3>
+                <p>Intelligent formatting that understands document structure and applies perfect styling.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>📊 Templates</h3>
+                <p>Professional templates for reports, resumes, letters, and more.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>🔤 Typography</h3>
+                <p>Perfect font pairing, sizing, and spacing automatically applied.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>📐 Layout Design</h3>
+                <p>Optimal margins, columns, and page layouts for every document type.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>🔄 Consistency</h3>
+                <p>Maintain consistent formatting across all your documents automatically.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>⚡ One-Click Fix</h3>
+                <p>Fix formatting issues instantly with intelligent suggestions.</p>
+            </div>
+        </div>
+
+        <section class="use-cases">
+            <h2>Perfect For</h2>
+            <div class="use-case-list">
+                <div class="use-case-item">
+                    <h4>💼 Business Documents</h4>
+                    <p>Professional reports, proposals, and presentations</p>
+                </div>
+
+                <div class="use-case-item">
+                    <h4>🎓 Academic Papers</h4>
+                    <p>Essays, research papers, and thesis formatting</p>
+                </div>
+
+                <div class="use-case-item">
+                    <h4>📧 Email Templates</h4>
+                    <p>Beautifully formatted email campaigns</p>
+                </div>
+
+                <div class="use-case-item">
+                    <h4>📄 Resumes & CVs</h4>
+                    <p>Professional resume formatting that stands out</p>
+                </div>
+
+                <div class="use-case-item">
+                    <h4>📝 Blog Posts</h4>
+                    <p>SEO-friendly article formatting</p>
+                </div>
+
+                <div class="use-case-item">
+                    <h4>📚 Ebooks</h4>
+                    <p>Publication-ready book formatting</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: #ff69b4;">Ready to Format Like a Pro?</h2>
+            <p style="color: #b0b0b0; margin-bottom: 2rem; font-size: 1.2rem;">Join the waitlist for exclusive early access</p>
+            <a href="index.html#waitlist" class="cta-button">Join Waitlist Now ➡</a>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 Nikka AI Hub. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const body = document.body;
+            
+            menu.classList.toggle('active');
+            
+            if (menu.classList.contains('active')) {
+                body.style.overflow = 'hidden';
+            } else {
+                body.style.overflow = '';
+            }
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('mobileMenu');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (menu.classList.contains('active') && 
+                !menu.contains(e.target) && 
+                !menuToggle.contains(e.target)) {
+                toggleMenu();
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const orbs = document.querySelectorAll('.gradient-orb');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            orbs.forEach((orb, index) => {
+                const speed = (index + 1) * 30;
+                orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
